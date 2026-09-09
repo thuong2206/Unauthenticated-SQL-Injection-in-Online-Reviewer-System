@@ -6,7 +6,7 @@
 - **Version:** v1.0
 - **Vendor:** Fabian Ros (Code-Projects)
 - **Software Link:** [(https://code-projects.org/online-reviewer-system-in-php-with-source-code/)](https://code-projects.org/online-reviewer-system-in-php-with-source-code/)
-- **Severity:** Critical - 9.8
+- **Severity:** Critical 
 
 ## 2. Description
 A Critical Unauthenticated SQL Injection vulnerability exists in the "Online Reviewer System v1.0" within the user update logic (btn_functions.php).
