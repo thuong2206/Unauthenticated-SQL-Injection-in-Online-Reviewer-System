@@ -9,11 +9,11 @@
 - **Severity:** Critical 
 
 ## 2. Description
-A Critical Unauthenticated SQL Injection vulnerability exists in the "Online Reviewer System v1.0" within the user update logic (btn_functions.php).
+A Critical Unauthenticated SQL Injection vulnerability exists in the "**Online Reviewer System**" within the user update logic (`btn_functions.php`).
 
 The application directly interpolates multiple unsanitized user inputs into an **UPDATE** SQL statement. Every parameter in this request is vulnerable. An attacker can exploit this flaw by sending a crafted HTTP POST request entirely unauthenticated—requiring no valid session, no cookies, and no prior access credentials of any kind.
 
-By injecting SQL comment syntax `(-- -)` into any of the parameters (e.g., password), the attacker can truncate the original `WHERE user_id = '$user_id'` clause that normally relies on session data. When the WHERE clause is neutralized, the database applies the UPDATE operation to every single row in the users table. This allows a complete Mass Account Takeover (Mass ATO). The attacker can simultaneously overwrite the usernames, passwords, and privileges of all users in the system—including Administrators—without needing to know or guess any specific user IDs.
+By injecting SQL comment syntax `(-- -)` into any of the parameters (e.g., password), the attacker can truncate the original `WHERE user_id = '$user_id'` clause that normally relies on session data. When the `WHERE` clause is neutralized, the database applies the **UPDATE** operation to every single row in the users table. This allows a complete Mass Account Takeover (Mass ATO). The attacker can simultaneously overwrite the usernames, passwords, and privileges of all users in the system—including Administrators—without needing to know or guess any specific user IDs.
 
 
 ## 3. Root Cause Analysis
@@ -21,7 +21,7 @@ The vulnerability is located in `/reviewer/system/system/admins/manage/users/btn
 
 The root cause of this vulnerability lies in the dangerous combination of unsanitized input interpolation and a structural flaw that allows attackers to logically bypass the system's intended authentication mechanism.
 
-In `btn_functions.php` (Lines ~64-76):
+In `btn_functions.php` :
 ```php
 // The system attempts to enforce authorization by relying on the session
 $user_id =$_SESSION['user_id']; 
@@ -37,15 +37,15 @@ password = '$password' WHERE user_id = '$user_id' ";
   header("location: index.php");
  }
 ```
-The developer intended to secure this endpoint by appending `WHERE user_id = '$user_id'` at the end of the query. Under normal circumstances, because this $user_id is fetched strictly from the active session `($_SESSION['user_id'])`, it acts as the primary authorization barrier.
+The developer intended to secure this endpoint by appending `WHERE user_id = '$user_id'` at the end of the query. Under normal circumstances, because this `$user_id` is fetched strictly from the active session `($_SESSION['user_id'])`, it acts as the primary authorization barrier.
 
-However, a fatal flaw arises from concatenating user input directly into the SQL string without parameterization. By injecting an SQL comment sequence `(-- -)` into the $password parameter, an attacker forcefully truncates the query during execution, effectively erasing the WHERE `user_id = '$user_id'` clause entirely.
+However, a fatal flaw arises from concatenating user input directly into the SQL string without parameterization. By injecting an SQL comment sequence `(-- -)` into the `$password` parameter, an attacker forcefully truncates the query during execution, effectively erasing the `WHERE user_id = '$user_id'` clause entirely.
 
 Since this specific clause is the sole mechanism tying the database operation to an authenticated user session, its removal renders the system's cookie validation completely useless. This logical short-circuit strips away all authorization barriers, exposing the endpoint as a Critical, zero-click unauthenticated attack vector that grants any anonymous attacker absolute write access to the database.
 
 ## 4. Proof of Concept (PoC)
 ### Step 1: Crafting the Payload
-The attacker injects a malicious payload into the password parameter. The payload uses inline comments `(/**/)` to bypass potential space filters and completely comments out the original session-based WHERE clause. The attacker can either target a specific known ID or remove the condition entirely to overwrite all accounts.
+The attacker injects a malicious payload into the password parameter. The payload uses inline comments `(/**/)` to bypass potential space filters and completely comments out the original session-based `WHERE` clause. The attacker can either target a specific known ID or remove the condition entirely to overwrite all accounts.
 
 **Targeted Payload** : `hacked12'/**/WHERE/**/user_id=25/**/-- -`
 
