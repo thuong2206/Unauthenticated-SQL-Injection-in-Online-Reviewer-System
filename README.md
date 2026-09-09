@@ -87,9 +87,9 @@ Logging into the application or checking the database confirms the payload succe
 
 
 ## 5. Impact
-- **Mass Account Takeover (Mass ATO)**: By omitting a targeted user_id in the injected payload, an unauthenticated attacker can overwrite the credentials and roles of every single user in the database simultaneously.
+- **Mass Account Takeover (Mass ATO)**: By omitting a targeted `user_id` in the injected payload, an unauthenticated attacker can overwrite the credentials and roles of every single user in the database simultaneously.
 
-- **Absolute Privilege Escalation**: An attacker can arbitrarily grant themselves Administrator privileges by modifying the usertype_id and user_type parameters during the injection.
+- **Absolute Privilege Escalation**: An attacker can arbitrarily grant themselves Administrator privileges by modifying the `usertype_id` parameters during the injection.
 
 - **Zero-Click Unauthenticated Exploitation**: Because the attack neutralizes the session dependency, it requires no prior credentials, no user interaction, and can be easily automated for mass exploitation across any exposed instances of the software.
 
@@ -100,7 +100,7 @@ Logging into the application or checking the database confirms the payload succe
 
 - **Strict Authentication Validation**: Explicitly verify the existence and validity of `$_SESSION['user_id']` at the very beginning of the script. If the session is invalid or missing, immediately terminate the execution using exit(); or redirect the user before evaluating any HTTP POST data.
 
-- **Input Validation & Sanitization**: Enforce strict type casting for all parameters (e.g., ensuring usertype_id only accepts expected integers) and reject any requests containing unexpected SQL metacharacters.
+- **Input Validation & Sanitization**: Enforce strict type casting for all parameters (e.g., ensuring `usertype_id` only accepts expected integers) and reject any requests containing unexpected SQL metacharacters.
 
 ## 7. Disclosure Timeline
 - Sep 09, 2026: Vulnerability discovered.
