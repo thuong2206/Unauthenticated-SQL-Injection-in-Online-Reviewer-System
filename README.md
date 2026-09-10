@@ -81,7 +81,7 @@ Following the redirect, the server returns a 200 OK, confirming the request was 
 <img width="925" height="651" alt="Screenshot_40" src="https://github.com/user-attachments/assets/05d24275-9ba9-464f-a561-3447fe91a0ea" />
 
 ### Step 4: Verification of Account Takeover
-Logging into the application or checking the database confirms the payload successfully executed. The password for the targeted administrator account (e.g., user_id=25) has been forcefully changed to
+Logging into the application with the changed password or checking the database confirms the payload successfully executed. The password for the targeted administrator account (e.g., user_id=25) has been forcefully changed to
 
 <img width="1919" height="598" alt="Screenshot_41" src="https://github.com/user-attachments/assets/d047602e-21cb-46b5-b972-4d1350dcb87c" />
 
